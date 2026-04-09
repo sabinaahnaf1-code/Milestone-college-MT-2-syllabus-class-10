@@ -347,8 +347,35 @@ export default function App() {
                     <div className="text-2xl font-black">{Math.round(overallProgress)}%</div>
                     <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">Completed</div>
                   </div>
-                  <div className="h-12 w-12 rounded-full border-4 border-zinc-100 border-t-zinc-900 flex items-center justify-center">
-                    <Trophy className={`h-5 w-5 ${overallProgress === 100 ? 'text-yellow-500' : 'text-zinc-200'}`} />
+                  <div className="relative h-14 w-14 flex items-center justify-center">
+                    <svg className="h-full w-full -rotate-90 transform">
+                      <circle
+                        cx="28"
+                        cy="28"
+                        r="24"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="transparent"
+                        className="text-zinc-100"
+                      />
+                      <motion.circle
+                        cx="28"
+                        cy="28"
+                        r="24"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="transparent"
+                        strokeDasharray={2 * Math.PI * 24}
+                        initial={{ strokeDashoffset: 2 * Math.PI * 24 }}
+                        animate={{ strokeDashoffset: 2 * Math.PI * 24 * (1 - overallProgress / 100) }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        strokeLinecap="round"
+                        className="text-zinc-900"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Trophy className={`h-5 w-5 ${overallProgress === 100 ? 'text-yellow-500' : 'text-zinc-300'}`} />
+                    </div>
                   </div>
                 </div>
               </div>
