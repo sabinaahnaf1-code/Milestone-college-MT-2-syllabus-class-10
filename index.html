@@ -30,6 +30,16 @@
             }
           }, true);
         }
+
+        // Shim for JSON.parse("undefined") which is a common error in some libraries
+        var originalParse = JSON.parse;
+        JSON.parse = function(text, reviver) {
+          if (text === "undefined") {
+            console.warn('Blocked attempt to parse "undefined" as JSON');
+            return undefined;
+          }
+          return originalParse(text, reviver);
+        };
       })();
     </script>
   </head>
