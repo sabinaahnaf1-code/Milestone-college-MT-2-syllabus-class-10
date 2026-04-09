@@ -3,7 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>MT-2 Syllabus Tracker</title>
+    <script>
+      // Defensive fix for libraries attempting to overwrite window.fetch in sandboxed iframes
+      (function() {
+        const descriptor = Object.getOwnPropertyDescriptor(window, 'fetch');
+        if (descriptor && !descriptor.writable && !descriptor.set) {
+          const originalFetch = window.fetch;
+          try {
+            Object.defineProperty(window, 'fetch', {
+              configurable: true,
+              enumerable: true,
+              get: function() { return originalFetch; },
+              set: function(v) { console.warn('Blocked attempt to overwrite window.fetch'); }
+            });
+          } catch (e) {
+            console.error('Failed to define fetch shim:', e);
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
