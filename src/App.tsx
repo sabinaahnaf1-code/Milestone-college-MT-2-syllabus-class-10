@@ -319,100 +319,103 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-12">
-          
-          {/* Left Column: Overview & Progress */}
-          <div className="lg:col-span-4 space-y-6">
-            <Card className="border-zinc-200 shadow-sm overflow-hidden">
-              <div className="h-2 bg-zinc-900" />
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <LayoutDashboard className="h-5 w-5" />
-                  Overall Progress
-                </CardTitle>
-                <CardDescription>Your journey to MT-2 excellence</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm font-medium">
-                    <span>Completion</span>
-                    <span>{Math.round(overallProgress)}%</span>
-                  </div>
-                  <Progress value={overallProgress} className="h-3 bg-zinc-100" />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-xl bg-zinc-50 p-4 border border-zinc-100">
-                    <div className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Completed</div>
-                    <div className="text-2xl font-bold">{Object.values(progress).filter(Boolean).length}</div>
-                    <div className="text-[10px] text-zinc-400">Chapters</div>
-                  </div>
-                  <div className="rounded-xl bg-zinc-50 p-4 border border-zinc-100">
-                    <div className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Remaining</div>
-                    <div className="text-2xl font-bold">
-                      {syllabusData.reduce((acc, sub) => acc + sub.chapters.length, 0) - Object.values(progress).filter(Boolean).length}
-                    </div>
-                    <div className="text-[10px] text-zinc-400">Chapters</div>
-                  </div>
-                </div>
-
-                {overallProgress === 100 && (
-                  <motion.div 
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="flex items-center gap-3 rounded-xl bg-green-50 p-4 border border-green-100 text-green-700"
-                  >
-                    <Trophy className="h-8 w-8" />
-                    <div>
-                      <div className="font-bold">Amazing Work!</div>
-                      <div className="text-sm">You've completed the entire syllabus.</div>
-                    </div>
-                  </motion.div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="border-zinc-200 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-sm font-bold uppercase tracking-wider text-zinc-500">Subject Breakdown</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {syllabusData.map((subject) => {
-                  const subProgress = calculateSubjectProgress(subject);
-                  return (
-                    <div key={subject.name} className="space-y-1">
-                      <div className="flex justify-between text-xs font-medium">
-                        <span>{subject.name}</span>
-                        <span>{Math.round(subProgress)}%</span>
-                      </div>
-                      <Progress value={subProgress} className="h-1.5 bg-zinc-100" />
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column: Subject Tabs */}
-          <div className="lg:col-span-8">
-            <Tabs defaultValue={syllabusData[0].name} className="w-full">
-              <div className="mb-6 overflow-x-auto pb-2">
-                <TabsList className="bg-zinc-100 p-1 h-auto flex flex-wrap justify-start">
+        <Tabs defaultValue={syllabusData[0].name} className="w-full">
+          <div className="sticky top-[73px] z-40 -mx-4 mb-8 bg-zinc-50/80 px-4 py-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+              <div className="w-full overflow-x-auto pb-2 scrollbar-hide">
+                <TabsList className="inline-flex h-12 w-max items-center justify-start gap-2 bg-transparent p-0">
                   {syllabusData.map((subject) => (
                     <TabsTrigger 
                       key={subject.name} 
                       value={subject.name}
-                      className="data-[state=active]:bg-white data-[state=active]:shadow-sm px-4 py-2 text-sm"
+                      className="rounded-full border border-zinc-200 bg-white px-6 py-2 text-sm font-medium transition-all data-[state=active]:border-zinc-900 data-[state=active]:bg-zinc-900 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-zinc-100"
                     >
                       {subject.name}
                     </TabsTrigger>
                   ))}
                 </TabsList>
               </div>
+            </div>
+          </div>
 
+          <div className="grid gap-8 lg:grid-cols-12">
+            {/* Left Column: Overview & Progress */}
+            <div className="lg:col-span-4 space-y-6">
+              <Card className="border-zinc-200 shadow-sm overflow-hidden">
+                <div className="h-2 bg-zinc-900" />
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <LayoutDashboard className="h-5 w-5" />
+                    Overall Progress
+                  </CardTitle>
+                  <CardDescription>Your journey to MT-2 excellence</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm font-medium">
+                      <span>Completion</span>
+                      <span>{Math.round(overallProgress)}%</span>
+                    </div>
+                    <Progress value={overallProgress} className="h-3 bg-zinc-100" />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-xl bg-zinc-50 p-4 border border-zinc-100">
+                      <div className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Completed</div>
+                      <div className="text-2xl font-bold">{Object.values(progress).filter(Boolean).length}</div>
+                      <div className="text-[10px] text-zinc-400">Chapters</div>
+                    </div>
+                    <div className="rounded-xl bg-zinc-50 p-4 border border-zinc-100">
+                      <div className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-1">Remaining</div>
+                      <div className="text-2xl font-bold">
+                        {syllabusData.reduce((acc, sub) => acc + sub.chapters.length, 0) - Object.values(progress).filter(Boolean).length}
+                      </div>
+                      <div className="text-[10px] text-zinc-400">Chapters</div>
+                    </div>
+                  </div>
+
+                  {overallProgress === 100 && (
+                    <motion.div 
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="flex items-center gap-3 rounded-xl bg-green-50 p-4 border border-green-100 text-green-700"
+                    >
+                      <Trophy className="h-8 w-8" />
+                      <div>
+                        <div className="font-bold">Amazing Work!</div>
+                        <div className="text-sm">You've completed the entire syllabus.</div>
+                      </div>
+                    </motion.div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-zinc-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="text-sm font-bold uppercase tracking-wider text-zinc-500">Subject Breakdown</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {syllabusData.map((subject) => {
+                    const subProgress = calculateSubjectProgress(subject);
+                    return (
+                      <div key={subject.name} className="space-y-1">
+                        <div className="flex justify-between text-xs font-medium">
+                          <span>{subject.name}</span>
+                          <span>{Math.round(subProgress)}%</span>
+                        </div>
+                        <Progress value={subProgress} className="h-1.5 bg-zinc-100" />
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column: Content */}
+            <div className="lg:col-span-8">
               <AnimatePresence mode="wait">
                 {syllabusData.map((subject) => (
-                  <TabsContent key={subject.name} value={subject.name}>
+                  <TabsContent key={subject.name} value={subject.name} className="mt-0">
                     <motion.div
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -481,9 +484,9 @@ export default function App() {
                   </TabsContent>
                 ))}
               </AnimatePresence>
-            </Tabs>
+            </div>
           </div>
-        </div>
+        </Tabs>
       </main>
 
       {/* Footer */}
