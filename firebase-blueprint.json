@@ -5,19 +5,34 @@
       "description": "Stores the completion status of syllabus items for a specific user.",
       "type": "object",
       "properties": {
-        "uid": { "type": "string", "description": "The unique identifier of the user." },
+        "uid": { "type": "string", "description": "The unique identifier of the user (Firebase UID or simple_username)." },
         "subject": { "type": "string", "description": "The subject name." },
         "chapter": { "type": "string", "description": "The chapter or point identifier (e.g., '12.1')." },
         "completed": { "type": "boolean", "description": "Whether the chapter is completed." },
         "updatedAt": { "type": "string", "format": "date-time", "description": "The last time this progress was updated." }
       },
       "required": ["uid", "subject", "chapter", "completed", "updatedAt"]
+    },
+    "simpleUser": {
+      "title": "Simple User",
+      "description": "Stores username and PIN for low-friction authentication.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "pin": { "type": "string", "description": "4-digit PIN" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "pin", "createdAt"]
     }
   },
   "firestore": {
     "/progress/{progressId}": {
       "schema": "userProgress",
       "description": "Collection of user progress records."
+    },
+    "/simple_users/{userId}": {
+      "schema": "simpleUser",
+      "description": "Collection of simple auth users."
     }
   }
 }
