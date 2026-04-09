@@ -1,0 +1,23 @@
+{
+  "entities": {
+    "userProgress": {
+      "title": "User Progress",
+      "description": "Stores the completion status of syllabus items for a specific user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique identifier of the user." },
+        "subject": { "type": "string", "description": "The subject name." },
+        "chapter": { "type": "string", "description": "The chapter or point identifier (e.g., '12.1')." },
+        "completed": { "type": "boolean", "description": "Whether the chapter is completed." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "The last time this progress was updated." }
+      },
+      "required": ["uid", "subject", "chapter", "completed", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/progress/{progressId}": {
+      "schema": "userProgress",
+      "description": "Collection of user progress records."
+    }
+  }
+}
