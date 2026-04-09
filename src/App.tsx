@@ -550,7 +550,7 @@ export default function App() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-white/80 shadow-sm border border-zinc-100 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden sm:flex"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-white/90 shadow-md border border-zinc-200 flex"
                 onClick={() => {
                   if (scrollContainerRef.current) {
                     scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
@@ -562,7 +562,7 @@ export default function App() {
               
               <div 
                 ref={scrollContainerRef}
-                className="w-full overflow-x-auto scrollbar-hide px-2 sm:px-8"
+                className="w-full overflow-x-auto scrollbar-hide px-10"
               >
                 <TabsList className="inline-flex h-10 w-max items-center justify-start gap-2 bg-transparent p-0">
                   {syllabusData.map((subject) => (
@@ -580,7 +580,7 @@ export default function App() {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-white/80 shadow-sm border border-zinc-100 opacity-0 group-hover/nav:opacity-100 transition-opacity hidden sm:flex"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-white/90 shadow-md border border-zinc-200 flex"
                 onClick={() => {
                   if (scrollContainerRef.current) {
                     scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
