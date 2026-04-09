@@ -34,11 +34,20 @@
         // Shim for JSON.parse("undefined") which is a common error in some libraries
         var originalParse = JSON.parse;
         JSON.parse = function(text, reviver) {
-          if (text === "undefined") {
+          if (text === "undefined" || text === undefined) {
             console.warn('Blocked attempt to parse "undefined" as JSON');
             return undefined;
           }
-          return originalParse(text, reviver);
+          try {
+            return originalParse(text, reviver);
+          } catch (e) {
+            // If it's still failing with the specific "undefined" error, return undefined
+            if (String(text).trim() === "undefined") {
+              console.warn('Recovered from "undefined" JSON parse error');
+              return undefined;
+            }
+            throw e;
+          }
         };
       })();
     </script>
