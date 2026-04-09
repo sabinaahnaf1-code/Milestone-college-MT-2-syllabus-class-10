@@ -402,22 +402,22 @@ export default function App() {
 
         <Tabs defaultValue={syllabusData[0].name} className="w-full">
           {/* Subject Selection - Sticky below progress */}
-          <div className="sticky top-[60px] z-40 -mx-4 mb-6 bg-zinc-50/95 px-4 py-3 backdrop-blur-sm sm:-mx-6 sm:px-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400">Select Subject</h3>
+          <div className="sticky top-[56px] z-40 -mx-4 mb-6 border-b border-zinc-100 bg-zinc-50/95 px-4 py-4 backdrop-blur-md sm:-mx-6 sm:px-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Select Subject</h3>
               {overallProgress > 0 && (
-                <Badge variant="outline" className="text-[10px] font-bold border-zinc-200 text-zinc-500">
+                <Badge variant="outline" className="text-[10px] font-bold border-zinc-200 text-zinc-500 bg-white">
                   Keep Pushing! 🚀
                 </Badge>
               )}
             </div>
             <div className="w-full overflow-x-auto scrollbar-hide">
-              <TabsList className="inline-flex h-10 w-max items-center justify-start gap-2 bg-transparent p-0">
+              <TabsList className="flex h-11 w-max items-center justify-start gap-2 bg-transparent p-0">
                 {syllabusData.map((subject) => (
                   <TabsTrigger 
                     key={subject.name} 
                     value={subject.name}
-                    className="rounded-full border border-zinc-200 bg-white px-5 py-1.5 text-xs font-bold transition-all data-[state=active]:border-zinc-900 data-[state=active]:bg-zinc-900 data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-zinc-50"
+                    className="rounded-xl border border-zinc-200 bg-white px-5 py-2 text-xs font-bold transition-all data-active:border-zinc-900 data-active:bg-zinc-900 data-active:text-white data-active:shadow-lg hover:bg-zinc-50"
                   >
                     {subject.name}
                   </TabsTrigger>
