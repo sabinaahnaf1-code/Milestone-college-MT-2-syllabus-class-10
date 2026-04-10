@@ -20,9 +20,10 @@ import {
   setDoc, 
   doc, 
   serverTimestamp,
-  getDocFromServer,
+  getDoc,
   getDocs,
   deleteDoc,
+  getDocFromServer,
   writeBatch
 } from 'firebase/firestore';
 import { auth, db, googleProvider } from './firebase';
@@ -103,12 +104,8 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [pin, setPin] = useState('');
-  const [authMode, setAuthMode] = useState<'email' | 'username'>('username');
-  const [isSignUp, setIsSignUp] = useState(false);
   const [progress, setProgress] = useState<Record<string, boolean>>({});
   const [isAuthReady, setIsAuthReady] = useState(false);
   
@@ -187,21 +184,6 @@ export default function App() {
     }
   };
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        toast.success("Account created successfully!");
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-        toast.success("Signed in successfully!");
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
-
   const handleSimpleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || pin.length !== 4) {
@@ -209,11 +191,12 @@ export default function App() {
       return;
     }
 
-    const simpleUid = `simple_${username.toLowerCase()}`;
+    const simpleUid = `simple_${username.toLowerCase().trim()}`;
     const userDocRef = doc(db, 'simple_users', simpleUid);
     
     try {
-      const userDoc = await getDocFromServer(userDocRef);
+      // Use getDoc instead of getDocFromServer for better reliability
+      const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         if (userDoc.data().pin === pin) {
           const simpleUser: AppUser = {
@@ -229,7 +212,7 @@ export default function App() {
           toast.error("Incorrect PIN");
         }
       } else {
-        // Create new simple user
+        // Create new simple user (Sign Up)
         await setDoc(userDocRef, {
           username: username,
           pin: pin,
@@ -246,7 +229,8 @@ export default function App() {
         toast.success(`Account created for ${username}!`);
       }
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'simple_users');
+      console.error("Simple Auth Error:", error);
+      toast.error("Database error. Please try again.");
     }
   };
 
@@ -330,89 +314,42 @@ export default function App() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Tabs value={authMode} onValueChange={(v) => setAuthMode(v as any)} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="username">Username</TabsTrigger>
-                  <TabsTrigger value="email">Email</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="username">
-                  <form onSubmit={handleSimpleAuth} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <div className="relative">
-                        <UserCircle className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
-                        <Input 
-                          id="username" 
-                          type="text" 
-                          placeholder="Enter any username" 
-                          className="pl-10"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pin">4-Digit PIN (Visible)</Label>
-                      <div className="relative">
-                        <Lock className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
-                        <Input 
-                          id="pin" 
-                          type="text" 
-                          placeholder="1234" 
-                          maxLength={4}
-                          className="pl-10 font-mono tracking-[0.5em]"
-                          value={pin}
-                          onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800">
-                      Enter Tracker
-                    </Button>
-                  </form>
-                </TabsContent>
-
-                <TabsContent value="email">
-                  <form onSubmit={handleEmailAuth} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
-                        <Input 
-                          id="email" 
-                          type="email" 
-                          placeholder="name@example.com" 
-                          className="pl-10"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <div className="relative">
-                        <Lock className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
-                        <Input 
-                          id="password" 
-                          type="password" 
-                          placeholder="••••••••" 
-                          className="pl-10"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800">
-                      {isSignUp ? "Create Account" : "Sign In"}
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
+              <form onSubmit={handleSimpleAuth} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <div className="relative">
+                    <UserCircle className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
+                    <Input 
+                      id="username" 
+                      type="text" 
+                      placeholder="Enter any username" 
+                      className="pl-10"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="pin">4-Digit PIN (Visible)</Label>
+                  <div className="relative">
+                    <Lock className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
+                    <Input 
+                      id="pin" 
+                      type="text" 
+                      placeholder="1234" 
+                      maxLength={4}
+                      className="pl-10 font-mono tracking-[0.5em]"
+                      value={pin}
+                      onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      required
+                    />
+                  </div>
+                </div>
+                <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800">
+                  Enter Tracker
+                </Button>
+              </form>
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -430,17 +367,6 @@ export default function App() {
                 Google
               </Button>
             </CardContent>
-            {authMode === 'email' && (
-              <CardFooter>
-                <Button 
-                  variant="link" 
-                  className="w-full text-zinc-600" 
-                  onClick={() => setIsSignUp(!isSignUp)}
-                >
-                  {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-                </Button>
-              </CardFooter>
-            )}
           </Card>
         </motion.div>
       </div>
