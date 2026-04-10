@@ -28,6 +28,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isAdmin() {
+      return isAuthenticated() && 
+             (request.auth.token.email == 'sabinaahnaf1@gmail.com' || 
+              request.auth.token.email == 'sabinaahnaf1@gmail');
+    }
+
     function isSimpleUser(uid) {
       return uid.startsWith('simple_');
     }
@@ -42,13 +48,13 @@ service cloud.firestore {
     }
 
     match /simple_users/{userId} {
-      allow read, write: if true; // Low security for "any username" simple auth as requested
+      allow read, write: if isAdmin() || true; // Keep the 'true' for simple auth as requested
     }
 
     match /progress/{progressId} {
-      allow read: if (isAuthenticated() && resource.data.uid == request.auth.uid) || 
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.uid == request.auth.uid) || 
                      isSimpleUser(resource.data.uid);
-      allow create, update, delete: if (isAuthenticated() && request.resource.data.uid == request.auth.uid) || 
+      allow create, update, delete: if isAdmin() || (isAuthenticated() && request.resource.data.uid == request.auth.uid) || 
                                       isSimpleUser(request.resource.data.uid);
     }
   }
