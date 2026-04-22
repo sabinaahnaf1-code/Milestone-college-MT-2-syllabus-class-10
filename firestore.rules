@@ -29,14 +29,15 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return request.auth != null && 
+      return isAuthenticated() && 
              request.auth.token != null &&
+             request.auth.token.email_verified == true &&
              (request.auth.token.email == 'sabinaahnaf1@gmail.com' || 
               request.auth.token.email == 'sabinaahnaf1@gmail');
     }
 
     function isSimpleUser(uid) {
-      return uid.startsWith('simple_');
+      return uid is string && uid.startsWith('simple_');
     }
 
     function isValidProgress(data) {
@@ -53,10 +54,12 @@ service cloud.firestore {
     }
 
     match /progress/{progressId} {
-      allow read: if isAdmin() || (isAuthenticated() && resource.data.uid == request.auth.uid) || 
-                     isSimpleUser(resource.data.uid);
-      allow create, update, delete: if isAdmin() || (isAuthenticated() && request.resource.data.uid == request.auth.uid) || 
-                                      isSimpleUser(request.resource.data.uid);
+      allow read: if isAdmin() || 
+                     (isAuthenticated() && resource.data.uid == request.auth.uid) || 
+                     (resource.data != null && resource.data.uid is string && resource.data.uid.startsWith('simple_'));
+      allow create, update, delete: if isAdmin() || 
+                                      (isAuthenticated() && request.resource.data.uid == request.auth.uid) || 
+                                      (request.resource.data.uid is string && request.resource.data.uid.startsWith('simple_'));
     }
   }
 }

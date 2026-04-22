@@ -66,6 +66,7 @@ interface AppUser {
   uid: string;
   displayName?: string | null;
   email?: string | null;
+  emailVerified?: boolean;
   isSimple?: boolean;
   username?: string;
 }
@@ -120,7 +121,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
 
-  const isAdmin = user?.email === 'sabinaahnaf1@gmail.com' || user?.email === 'sabinaahnaf1@gmail';
+  const isAdmin = (user?.email === 'sabinaahnaf1@gmail.com' || user?.email === 'sabinaahnaf1@gmail') && user?.emailVerified === true;
   useEffect(() => {
     async function testConnection() {
       try {
@@ -141,6 +142,7 @@ export default function App() {
           uid: firebaseUser.uid,
           displayName: firebaseUser.displayName,
           email: firebaseUser.email,
+          emailVerified: firebaseUser.emailVerified,
         });
       } else {
         // Check local storage for simple auth session
