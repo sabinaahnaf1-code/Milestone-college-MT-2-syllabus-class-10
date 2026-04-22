@@ -217,7 +217,7 @@ export default function App() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-zinc-50">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-800"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-zinc-200 border-t-primary"></div>
       </div>
     );
   }
@@ -240,10 +240,10 @@ export default function App() {
         >
           <Card className="border-zinc-200 shadow-xl">
             <CardHeader className="space-y-1 text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
                 <GraduationCap className="h-6 w-6" />
               </div>
-              <CardTitle className="text-2xl font-bold tracking-tight">MT-2 Syllabus Tracker</CardTitle>
+              <CardTitle className="text-2xl font-black tracking-tight text-primary">Milestone Tracker</CardTitle>
               <CardDescription>
                 Sign in to track your study progress
               </CardDescription>
@@ -251,7 +251,7 @@ export default function App() {
             <CardContent className="pt-6">
               <Button 
                 variant="outline" 
-                className="w-full h-12 text-base border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 transition-all font-medium" 
+                className="w-full h-12 text-base border-zinc-200 hover:bg-primary/5 hover:text-primary transition-all font-bold rounded-2xl" 
                 onClick={handleGoogleSignIn}
               >
                 <svg className="mr-3 h-5 w-5" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
@@ -284,100 +284,82 @@ export default function App() {
       <Toaster position="top-center" />
       
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-zinc-100 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-white">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-sm shadow-primary/20">
               <GraduationCap className="h-5 w-5" />
             </div>
-            <h1 className="text-lg font-bold tracking-tight">MT-2 Tracker</h1>
+            <div>
+              <h1 className="text-sm font-black tracking-tight text-primary leading-none">Milestone</h1>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Campus</p>
+            </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-xs font-medium">{user.displayName || user.email}</span>
+          <div className="flex items-center gap-4">
+            <nav className="hidden md:flex items-center gap-6 text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+              <span className="text-primary border-b-2 border-primary pb-1">Dashboard</span>
+              <span className="hover:text-primary transition-colors cursor-pointer">Library</span>
+              <span className="hover:text-primary transition-colors cursor-pointer">Lost & Found</span>
+            </nav>
+            <div className="flex items-center gap-3 pl-4 border-l border-zinc-100">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-xs font-bold text-zinc-900">{user.displayName?.split(' ')[0] || user.email?.split('@')[0]}</span>
+              </div>
+              <Button variant="ghost" size="icon" onClick={handleSignOut} className="h-8 w-8 text-zinc-400 hover:text-primary hover:bg-primary/5 rounded-full">
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleSignOut} className="h-8 w-8 text-zinc-500 hover:text-zinc-900">
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        {/* Overall Progress Section - Now at Top */}
-        <section className="mb-6">
-          <Card className="border-zinc-200 shadow-sm overflow-hidden bg-white">
-            <div className="h-1.5 bg-zinc-900" />
-            <CardContent className="p-5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <h2 className="text-xl font-bold flex items-center gap-2">
-                    <LayoutDashboard className="h-5 w-5 text-zinc-500" />
-                    Overall Progress
-                  </h2>
-                  <p className="text-sm text-zinc-500 italic">"{randomQuote}"</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className="text-2xl font-black">{Math.round(overallProgress)}%</div>
-                    <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold">Completed</div>
-                  </div>
-                  <div className="relative h-14 w-14 flex items-center justify-center">
-                    <svg className="h-full w-full -rotate-90 transform">
-                      <circle
-                        cx="28"
-                        cy="28"
-                        r="24"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="transparent"
-                        className="text-zinc-100"
-                      />
-                      <motion.circle
-                        cx="28"
-                        cy="28"
-                        r="24"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="transparent"
-                        strokeDasharray={2 * Math.PI * 24}
-                        initial={{ strokeDashoffset: 2 * Math.PI * 24 }}
-                        animate={{ strokeDashoffset: 2 * Math.PI * 24 * (1 - overallProgress / 100) }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        strokeLinecap="round"
-                        className="text-zinc-900"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Trophy className={`h-5 w-5 ${overallProgress === 100 ? 'text-yellow-500' : 'text-zinc-300'}`} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <Progress value={overallProgress} className="h-2 mt-4 bg-zinc-100" />
-              
-              <div className="grid grid-cols-3 gap-2 mt-4">
-                <div className="text-center p-2 rounded-lg bg-zinc-50 border border-zinc-100">
-                  <div className="text-lg font-bold">{Object.values(progress).filter(Boolean).length}</div>
-                  <div className="text-[9px] text-zinc-400 uppercase font-bold">Done</div>
-                </div>
-                <div className="text-center p-2 rounded-lg bg-zinc-50 border border-zinc-100">
-                  <div className="text-lg font-bold">
-                    {syllabusData.reduce((acc, sub) => acc + sub.chapters.length, 0) - Object.values(progress).filter(Boolean).length}
-                  </div>
-                  <div className="text-[9px] text-zinc-400 uppercase font-bold">Left</div>
-                </div>
-                <div className="text-center p-2 rounded-lg bg-zinc-50 border border-zinc-100">
-                  <div className="text-lg font-bold">{syllabusData.length}</div>
-                  <div className="text-[9px] text-zinc-400 uppercase font-bold">Subjects</div>
-                </div>
-              </div>
-            </CardContent>
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:py-8 space-y-8">
+        {/* Welcome Hero Banner - Matching Screenshot */}
+        <section className="relative overflow-hidden rounded-[2.5rem] bg-primary p-8 sm:p-12 text-white shadow-2xl shadow-primary/30">
+          <div className="relative z-10 max-w-2xl space-y-6">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary" className="bg-white/20 text-white border-none px-4 py-1 text-[10px] font-black uppercase tracking-wider rounded-full backdrop-blur-md">
+                Student Dashboard
+              </Badge>
+              <Badge variant="secondary" className="bg-white/10 text-white/80 border-none px-4 py-1 text-[10px] font-black uppercase tracking-wider rounded-full backdrop-blur-md">
+                Section: Badal
+              </Badge>
+            </div>
+            
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight">
+              Welcome Back, <span className="opacity-90">{user.displayName?.split(' ')[0] || user.username || 'Student'}</span>
+            </h2>
+            
+            <p className="text-lg text-white/70 font-medium leading-relaxed max-w-lg">
+              Access your personalized routines, syllabus, and real-time notices from your form teacher.
+            </p>
+          </div>
+          
+          {/* Decorative Elements */}
+          <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
+          <div className="absolute -top-12 -left-12 h-64 w-64 rounded-full bg-white/10 blur-2xl opacity-50" />
+        </section>
+
+        {/* Latest Notices - Placeholder to match screenshot layout */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 text-primary">
+            <RefreshCw className="h-5 w-5" />
+            <h3 className="text-lg font-black tracking-tight">Latest Notices</h3>
+          </div>
+          <Card className="border-none bg-zinc-50 border border-zinc-100 shadow-sm rounded-3xl p-8 text-center">
+            <p className="text-zinc-400 font-medium text-sm">No recent notices posted.</p>
           </Card>
         </section>
 
-        <Tabs defaultValue={syllabusData[0].name} className="w-full">
+        <div className="grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-8">
+            <div className="flex items-center gap-2 text-primary mb-6">
+              <BookOpen className="h-5 w-5" />
+              <h3 className="text-lg font-black tracking-tight">Class Syllabus</h3>
+            </div>
+
+            <Tabs defaultValue={syllabusData[0].name} className="w-full">
           {/* Subject Selection - Sticky below progress */}
           <div className="sticky top-[60px] z-40 -mx-4 mb-6 bg-zinc-50/95 px-4 py-3 backdrop-blur-sm sm:-mx-6 sm:px-6">
             <div className="flex items-center justify-between mb-2">
@@ -411,7 +393,7 @@ export default function App() {
                     <TabsTrigger 
                       key={subject.name} 
                       value={subject.name}
-                      className="rounded-full border border-zinc-200 bg-white px-5 py-1.5 text-xs font-bold transition-all data-[state=active]:border-zinc-900 data-[state=active]:bg-zinc-900 data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-zinc-50"
+                      className="rounded-full border border-zinc-200 bg-white px-5 py-1.5 text-xs font-bold transition-all data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-zinc-50"
                     >
                       {subject.name}
                     </TabsTrigger>
@@ -456,7 +438,7 @@ export default function App() {
                       <div className="text-sm font-bold">{Math.round(calculateSubjectProgress(subject))}%</div>
                       <div className="w-24 h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-1">
                         <div 
-                          className="h-full bg-zinc-900 transition-all duration-500" 
+                          className="h-full bg-primary transition-all duration-500" 
                           style={{ width: `${calculateSubjectProgress(subject)}%` }}
                         />
                       </div>
@@ -470,16 +452,16 @@ export default function App() {
                         <motion.div 
                           key={chapter.id}
                           whileTap={{ scale: 0.98 }}
-                          className={`group flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 cursor-pointer ${
+                          className={`group flex items-center justify-between rounded-2xl border p-4 transition-all duration-300 cursor-pointer ${
                             isCompleted 
-                              ? 'border-zinc-200 bg-zinc-100/50 opacity-80' 
-                              : 'border-white bg-white shadow-sm hover:shadow-md hover:border-zinc-200'
+                              ? 'border-primary/10 bg-primary/5 opacity-70' 
+                              : 'border-zinc-100 bg-white shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20'
                           }`}
                           onClick={() => toggleProgress(subject.name, chapter.id)}
                         >
                           <div className="flex items-center gap-4">
-                            <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black ${
-                              isCompleted ? 'bg-zinc-200 text-zinc-500' : 'bg-zinc-900 text-white'
+                            <div className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black transition-all ${
+                              isCompleted ? 'bg-zinc-200 text-zinc-500' : 'bg-primary text-white shadow-lg shadow-primary/20'
                             }`}>
                               {index + 1}
                             </div>
@@ -494,7 +476,7 @@ export default function App() {
                             <Checkbox 
                               checked={isCompleted}
                               onCheckedChange={() => toggleProgress(subject.name, chapter.id)}
-                              className="h-6 w-6 rounded-lg border-zinc-200 data-[state=checked]:bg-zinc-900 data-[state=checked]:border-zinc-900"
+                              className="h-6 w-6 rounded-lg border-zinc-200 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                               onClick={(e) => e.stopPropagation()}
                             />
                           </div>
@@ -504,17 +486,99 @@ export default function App() {
                   </div>
 
                   {calculateSubjectProgress(subject) === 100 && (
-                    <div className="p-6 text-center rounded-3xl bg-zinc-900 text-white shadow-xl">
+                    <div className="p-6 text-center rounded-3xl bg-primary text-white shadow-xl shadow-primary/20">
                       <CheckCircle2 className="h-10 w-10 mx-auto mb-3 text-white" />
                       <h4 className="text-lg font-bold">Subject Mastered!</h4>
-                      <p className="text-sm text-zinc-400">You've finished all chapters for {subject.name}.</p>
+                      <p className="text-sm text-white/50">You've finished all chapters for {subject.name}.</p>
                     </div>
                   )}
                 </motion.div>
               </TabsContent>
             ))}
           </AnimatePresence>
-        </Tabs>
+            </Tabs>
+          </div>
+
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="border-none bg-white shadow-xl shadow-zinc-200/50 rounded-[2rem] overflow-hidden">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-2 text-primary/60">
+                  <LayoutDashboard className="h-4 w-4" />
+                  <CardTitle className="text-xs font-black uppercase tracking-widest">M2 Syllabus Tracker</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-100 space-y-3">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-zinc-400 pl-1">
+                    <span>Status</span>
+                    <span>Live</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-12 w-12 flex-shrink-0">
+                      <svg className="h-full w-full -rotate-90 transform">
+                        <circle
+                          cx="24"
+                          cy="24"
+                          r="20"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="transparent"
+                          className="text-zinc-200"
+                        />
+                        <circle
+                          cx="24"
+                          cy="24"
+                          r="20"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="transparent"
+                          strokeDasharray={2 * Math.PI * 20}
+                          strokeDashoffset={2 * Math.PI * 20 * (1 - overallProgress / 100)}
+                          strokeLinecap="round"
+                          className="text-primary transition-all duration-500"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black">
+                        {Math.round(overallProgress)}%
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-black text-sm text-primary">M2 (Live Tracker)</h4>
+                      <p className="text-[10px] font-bold text-zinc-400">Starting April 4, 2026</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <div className="text-2xl font-black text-zinc-900">{Object.values(progress).filter(Boolean).length}</div>
+                      <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Chapters Done</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-base font-bold text-zinc-900">{syllabusData.length} Subjects</div>
+                      <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 italic">"Keep Pushing!"</div>
+                    </div>
+                  </div>
+                  <Progress value={overallProgress} className="h-2 bg-zinc-100" />
+                </div>
+
+                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-black rounded-2xl h-12 shadow-lg shadow-primary/20">
+                  Launch M2 Syllabus Tracker
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-none bg-zinc-900 text-white rounded-[2rem] p-6 space-y-4 overflow-hidden relative">
+              <div className="relative z-10">
+                <Trophy className="h-8 w-8 text-yellow-500 mb-2" />
+                <h4 className="text-xl font-black tracking-tight">Milestone Rank</h4>
+                <p className="text-xs text-white/60 font-medium">Top 5% of students in Badal section</p>
+              </div>
+              <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-white/5 rounded-full blur-xl" />
+            </Card>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
