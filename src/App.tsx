@@ -7,8 +7,6 @@ import { useState, useEffect } from 'react';
 import { 
   onAuthStateChanged, 
   signInWithPopup, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
   signOut,
   User
 } from 'firebase/auth';
@@ -67,8 +65,6 @@ interface AppUser {
   displayName?: string | null;
   email?: string | null;
   emailVerified?: boolean;
-  isSimple?: boolean;
-  username?: string;
 }
 
 // Error handling helper as per instructions
@@ -105,8 +101,6 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
 export default function App() {
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState('');
-  const [pin, setPin] = useState('');
   const [progress, setProgress] = useState<Record<string, boolean>>({});
   const [isAuthReady, setIsAuthReady] = useState(false);
   
@@ -145,13 +139,7 @@ export default function App() {
           emailVerified: firebaseUser.emailVerified,
         });
       } else {
-        // Check local storage for simple auth session
-        const savedUser = localStorage.getItem('simple_user');
-        if (savedUser) {
-          setUser(JSON.parse(savedUser));
-        } else {
-          setUser(null);
-        }
+        setUser(null);
       }
       setLoading(false);
       setIsAuthReady(true);
@@ -186,64 +174,9 @@ export default function App() {
     }
   };
 
-  const handleSimpleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username || pin.length !== 4) {
-      toast.error("Please enter a username and 4-digit PIN");
-      return;
-    }
-
-    const simpleUid = `simple_${username.toLowerCase().trim()}`;
-    const userDocRef = doc(db, 'simple_users', simpleUid);
-    
-    try {
-      // Use getDoc instead of getDocFromServer for better reliability
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        if (userDoc.data().pin === pin) {
-          const simpleUser: AppUser = {
-            uid: simpleUid,
-            username: username,
-            isSimple: true,
-            displayName: username
-          };
-          setUser(simpleUser);
-          localStorage.setItem('simple_user', JSON.stringify(simpleUser));
-          toast.success(`Welcome back, ${username}!`);
-        } else {
-          toast.error("Incorrect PIN");
-        }
-      } else {
-        // Create new simple user (Sign Up)
-        await setDoc(userDocRef, {
-          username: username,
-          pin: pin,
-          createdAt: serverTimestamp()
-        });
-        const simpleUser: AppUser = {
-          uid: simpleUid,
-          username: username,
-          isSimple: true,
-          displayName: username
-        };
-        setUser(simpleUser);
-        localStorage.setItem('simple_user', JSON.stringify(simpleUser));
-        toast.success(`Account created for ${username}!`);
-      }
-    } catch (error) {
-      console.error("Simple Auth Error:", error);
-      toast.error("Database error. Please try again.");
-    }
-  };
-
   const handleSignOut = async () => {
     try {
-      if (user?.isSimple) {
-        setUser(null);
-        localStorage.removeItem('simple_user');
-      } else {
-        await signOut(auth);
-      }
+      await signOut(auth);
       toast.success("Signed out successfully!");
     } catch (error: any) {
       toast.error(error.message);
@@ -315,58 +248,16 @@ export default function App() {
                 Sign in to track your study progress
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleSimpleAuth} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <div className="relative">
-                    <UserCircle className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
-                    <Input 
-                      id="username" 
-                      type="text" 
-                      placeholder="Enter any username" 
-                      className="pl-10"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="pin">4-Digit PIN (Visible)</Label>
-                  <div className="relative">
-                    <Lock className="absolute top-3 left-3 h-4 w-4 text-zinc-400" />
-                    <Input 
-                      id="pin" 
-                      type="text" 
-                      placeholder="1234" 
-                      maxLength={4}
-                      className="pl-10 font-mono tracking-[0.5em]"
-                      value={pin}
-                      onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                      required
-                    />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800">
-                  Enter Tracker
-                </Button>
-              </form>
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-zinc-200" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-zinc-500">Or continue with</span>
-                </div>
-              </div>
-
-              <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-                <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+            <CardContent className="pt-6">
+              <Button 
+                variant="outline" 
+                className="w-full h-12 text-base border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 transition-all font-medium" 
+                onClick={handleGoogleSignIn}
+              >
+                <svg className="mr-3 h-5 w-5" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
                   <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
                 </svg>
-                Google
+                Sign in with Google
               </Button>
             </CardContent>
           </Card>
